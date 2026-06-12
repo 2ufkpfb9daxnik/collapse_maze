@@ -9,6 +9,22 @@ const TILE = {
   EXIT: "exit"
 };
 
+const SOUND_FILES = {
+  gameStart: "button03b.mp3",
+  keyPickup: "powerup03.mp3",
+  treasurePickup: "coin04.mp3",
+  unlock: "correct_answer1.mp3",
+  move: "knock_on_thick_glass4.mp3"
+};
+
+const soundEffects = Object.fromEntries(
+  Object.entries(SOUND_FILES).map(([name, fileName]) => {
+    const audio = new Audio(fileName);
+    audio.preload = "auto";
+    return [name, audio];
+  })
+);
+
 const boardEl = document.getElementById("board");
 const floorNumberEl = document.getElementById("floorNumber");
 const stepsEl = document.getElementById("steps");
@@ -45,6 +61,19 @@ function randomInt(min, max) {
 
 function choice(array) {
   return array[Math.floor(Math.random() * array.length)];
+}
+
+function playSound(name) {
+  const sound = soundEffects[name];
+
+  if (!sound) {
+    return;
+  }
+
+  const clone = sound.cloneNode();
+  clone.play().catch(() => {
+    // 効果音は再生できない環境でもゲーム進行を止めない。
+  });
 }
 
 function coordKey(pos) {
@@ -409,7 +438,7 @@ function finishFloor() {
   addScore(floorClearBonus + treasureBonus + keyBonus - stepPenalty);
   totalSteps += steps;
   updateRecord();
-  updateMessage(`第${floorNumber}階層を突破！ 次の階層へ移動します。`);
+  updateMessage(`第${floorNumber}階層を突破！ 次の階層へ`);
   goToNextFloor();
 }
 
@@ -431,6 +460,7 @@ function startRun() {
   state = "playing";
   score = 0;
   updateMessage("新しい挑戦を始めました。");
+  playSound("gameStart");
   startFloor();
 }
 
@@ -469,6 +499,7 @@ function tryMove(dx, dy) {
   player = { x: nextX, y: nextY };
   steps += 1;
   addScore(-1);
+  playSound("move");
 
   if (keyItem && player.x === keyItem.x && player.y === keyItem.y) {
     const beforeKeyScore = score;
@@ -476,6 +507,7 @@ function tryMove(dx, dy) {
     keyItem = null;
     addScore(50);
     updateMessage(`鍵を拾いました。スコア +${score - beforeKeyScore} (${beforeKeyScore} → ${score})`);
+    playSound("keyPickup");
   }
 
   const treasure = getTreasureAt(player.x, player.y);
@@ -485,10 +517,12 @@ function tryMove(dx, dy) {
     removeTreasureAt(player.x, player.y);
     addScore(100);
     updateMessage(`宝を手に入れました。スコア +${score - beforeTreasureScore} (${beforeTreasureScore} → ${score})`);
+    playSound("treasurePickup");
   }
 
   if (player.x === exit.x && player.y === exit.y) {
     if (hasKey) {
+      playSound("unlock");
       finishFloor();
       return;
     }
