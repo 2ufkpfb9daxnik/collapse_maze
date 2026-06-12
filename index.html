@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>崩れ床の迷宮</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <aside class="log-column">
+      <div class="panel message-panel">
+        <div id="message" class="log-feed" aria-live="polite"></div>
+      </div>
+    </aside>
+
+    <section class="board-column">
+      <div id="board" class="board" aria-label="迷宮"></div>
+      <div class="help-row">
+        <div class="panel help-panel">
+          <p>↑ ↓ ← →：移動</p>
+          <p>W A S D：移動</p>
+          <p>Enter：次の階層へ</p>
+          <p>R：リセット</p>
+        </div>
+
+        <div class="panel help-panel legend">
+          <p><span class="legend-icon player-icon"></span> 探索者</p>
+          <p><span class="legend-icon floor-icon"></span> 床</p>
+          <p><span class="legend-icon wall-icon"></span> 壁</p>
+          <p><span class="legend-icon broken-icon"></span> 崩れ床</p>
+          <p><span class="legend-icon key-icon"></span> 鍵</p>
+          <p><span class="legend-icon treasure-icon"></span> 宝</p>
+          <p><span class="legend-icon exit-icon"></span> 出口</p>
+        </div>
+      </div>
+    </section>
+
+    <aside class="status-column">
+      <div class="panel stats">
+        <p>階層: <span id="floorNumber">1</span></p>
+        <p>歩数: <span id="steps">0</span></p>
+        <p>宝: <span id="treasures">0</span></p>
+        <p>鍵: <span id="hasKey">なし</span></p>
+        <p>状態: <span id="stateText">探索中</span></p>
+        <p>スコア: <span id="score">0</span></p>
+
+        <hr class="divider" />
+
+        <p>最高階層: <span id="bestFloor">1</span></p>
+        <p>最高スコア: <span id="bestScore">0</span></p>
+      </div>
+
+      <div class="panel button-panel">
+        <button id="nextFloorButton" disabled>次の階層へ</button>
+        <button id="restartButton">リセット</button>
+      </div>
+    </aside>
+  </main>
+
+  <script src="game.js"></script>
+</body>
+</html>
